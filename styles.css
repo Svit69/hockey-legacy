@@ -228,32 +228,35 @@ body {
 
 .upgrade-card {
     background: url('./assets/upgrade_stadium_card.png');
-    background-size: cover;
-    padding: 15px;
+    background-size: 100% 100%;
+    padding: 10px;
     display: flex;
     align-items: center;
-    gap: 15px;
-    min-height: 80px;
+    gap: 10px;
+    min-height: 70px;
     width: 100%;
     box-sizing: border-box;
 }
 
 .upgrade-icon {
-    width: 48px;
-    height: 48px;
+    width: 40px;
+    height: 40px;
     image-rendering: pixelated;
+    flex-shrink: 0;
 }
 
 .upgrade-info {
     flex: 1;
     min-width: 0;
+    margin-right: 10px;
 }
 
 .upgrade-title {
     color: #E1C291;
-    font-size: 14px;
+    font-size: 12px;
     white-space: normal;
     word-wrap: break-word;
+    line-height: 1.2;
 }
 
 .upgrade-description {
@@ -262,23 +265,24 @@ body {
 
 .upgrade-price {
     background: url('./assets/price_tag.png');
-    background-size: contain;
+    background-size: 100% 100%;
     background-repeat: no-repeat;
-    padding: 8px 15px;
+    padding: 10px 20px;
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 8px;
+    flex-shrink: 0;
 }
 
 .price-icon {
-    width: 16px;
-    height: 16px;
+    width: 20px;
+    height: 20px;
     image-rendering: pixelated;
 }
 
 .price-value {
     color: #E1C291;
-    font-size: 12px;
+    font-size: 14px;
 }
 
 .close-button {
