@@ -30,6 +30,37 @@ export function renderMainGame(container) {
     `;
 }
 
+// Handle upgrade purchase
+function handleUpgradePurchase(upgradeCard, upgrade) {
+    if (gameState.coins < upgrade.price) {
+        upgradeCard.classList.add('cannot-afford');
+        setTimeout(() => upgradeCard.classList.remove('cannot-afford'), 500);
+        return;
+    }
+
+    upgradeCard.classList.add('purchasing');
+    
+    // Update game state
+    gameState.coins -= upgrade.price;
+    upgrade.completed = true;
+
+    // Update UI
+    updateResources();
+    
+    // Change background if fix_boards is purchased
+    if (upgrade.id === 'fix_boards') {
+        const gameScene = document.querySelector('.game-scene');
+        if (gameScene) {
+            gameScene.style.backgroundImage = "url('./assets/stage_1.png')";
+        }
+    }
+
+    // Remove card after animation
+    setTimeout(() => {
+        upgradeCard.classList.add('completed');
+    }, 500);
+}
+
 // Render stadium upgrades popup
 function renderStadiumPopup() {
     const popup = document.createElement('div');
@@ -47,7 +78,6 @@ function renderStadiumPopup() {
                         <img src="${upgrade.icon}" alt="${upgrade.title}" class="upgrade-icon pixelated">
                         <div class="upgrade-info">
                             <div class="upgrade-title">${upgrade.title}</div>
-                            <div class="upgrade-description">${upgrade.description}</div>
                         </div>
                         <div class="upgrade-price">
                             <img src="./assets/coin_icon.png" alt="Монеты" class="price-icon">
@@ -60,6 +90,18 @@ function renderStadiumPopup() {
     `;
     
     document.body.appendChild(popup);
+
+    // Add click handlers for upgrade cards
+    const upgradeCards = popup.querySelectorAll('.upgrade-card:not(.completed)');
+    upgradeCards.forEach(card => {
+        card.addEventListener('click', () => {
+            const upgradeId = card.dataset.id;
+            const upgrade = upgrades.find(u => u.id === upgradeId);
+            if (upgrade && !upgrade.completed) {
+                handleUpgradePurchase(card, upgrade);
+            }
+        });
+    });
 }
 
 // Popup handling
@@ -81,6 +123,7 @@ export function closePopup() {
 
 // Make closePopup available globally
 window.closePopup = closePopup;
+window.openPopup = openPopup;
 
 // Update resource display
 export function updateResources() {

@@ -1,7 +1,8 @@
 // Game state management
 export const gameState = {
     coins: 1000,
-    popularity: 50
+    popularity: 50,
+    completedUpgrades: []
 };
 
 // Save game state to localStorage
@@ -15,4 +16,12 @@ export function loadGameState() {
     if (savedState) {
         Object.assign(gameState, JSON.parse(savedState));
     }
+}
+
+// Update game state after upgrade purchase
+export function updateAfterPurchase(upgradeId) {
+    if (!gameState.completedUpgrades.includes(upgradeId)) {
+        gameState.completedUpgrades.push(upgradeId);
+    }
+    saveGameState();
 } 

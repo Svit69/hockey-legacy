@@ -236,6 +236,39 @@ body {
     min-height: 70px;
     width: 100%;
     box-sizing: border-box;
+    cursor: pointer;
+    transition: transform 0.5s ease-out;
+    position: relative;
+}
+
+.upgrade-card.completed {
+    pointer-events: none;
+    transform: translateX(100%);
+    opacity: 0;
+}
+
+@keyframes purchaseSlide {
+    0% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+.upgrade-card.purchasing {
+    animation: purchaseSlide 0.5s ease-out forwards;
+}
+
+.upgrade-card:hover:not(.completed):not(.purchasing) {
+    transform: scale(1.02);
+}
+
+.upgrade-card.cannot-afford {
+    cursor: not-allowed;
+    opacity: 0.7;
 }
 
 .upgrade-icon {

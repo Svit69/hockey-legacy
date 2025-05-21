@@ -6,7 +6,7 @@ export const stadiumUpgrades = {
             title: 'Починить деревянные борта',
             description: 'Старые борта прогнили и требуют срочного ремонта. Без этого играть опасно.',
             icon: './assets/fix_boards_icon.png',
-            price: 1000,
+            price: 400,
             completed: false
         },
         {
@@ -14,7 +14,7 @@ export const stadiumUpgrades = {
             title: 'Сделать навес над трибуной',
             description: 'Зрителям некомфортно смотреть матчи под снегом. Навес защитит их от непогоды.',
             icon: './assets/build_roof_icon.png',
-            price: 2000,
+            price: 400,
             completed: false
         },
         {
@@ -22,7 +22,7 @@ export const stadiumUpgrades = {
             title: 'Почистить парковку от снега',
             description: 'Заваленная снегом парковка отпугивает зрителей. Нужно организовать уборку.',
             icon: './assets/clean_parking_icon.png',
-            price: 500,
+            price: 100,
             completed: false
         }
     ],
