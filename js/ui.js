@@ -1,10 +1,11 @@
-import { gameState } from './gameState.js';
+import { gameState, saveGameState } from './gameState.js';
 import { getActiveUpgrades } from './stadiumUpgrades.js';
 
 // Render main game interface
 export function renderMainGame(container) {
+    updateGameScene();
     container.innerHTML = `
-        <div class="game-scene">
+        <div class="game-scene" style="background-image: url('./assets/stage_${gameState.completedUpgrades.includes('fix_boards') ? '1' : '0'}.png')">
             <div class="top-bar">
                 <div class="resource-item">
                     <img src="./assets/coin_icon.png" alt="Монеты" class="resource-icon pixelated">
@@ -30,6 +31,14 @@ export function renderMainGame(container) {
     `;
 }
 
+// Update game scene
+function updateGameScene() {
+    const gameScene = document.querySelector('.game-scene');
+    if (gameScene) {
+        gameScene.style.backgroundImage = `url('./assets/stage_${gameState.completedUpgrades.includes('fix_boards') ? '1' : '0'}.png')`;
+    }
+}
+
 // Handle upgrade purchase
 function handleUpgradePurchase(upgradeCard, upgrade) {
     if (gameState.coins < upgrade.price) {
@@ -43,7 +52,9 @@ function handleUpgradePurchase(upgradeCard, upgrade) {
     // Update game state
     gameState.coins -= upgrade.price;
     upgrade.completed = true;
-    gameState.completedUpgrades.push(upgrade.id);
+    if (!gameState.completedUpgrades.includes(upgrade.id)) {
+        gameState.completedUpgrades.push(upgrade.id);
+    }
     saveGameState();
 
     // Update UI
@@ -51,16 +62,49 @@ function handleUpgradePurchase(upgradeCard, upgrade) {
     
     // Change background if fix_boards is purchased
     if (upgrade.id === 'fix_boards') {
-        const gameScene = document.querySelector('.game-scene');
-        if (gameScene) {
-            gameScene.style.backgroundImage = "url('./assets/stage_1.png')";
-        }
+        updateGameScene();
     }
 
-    // Remove card after animation
+    // Remove card after animation and reflow the list
     setTimeout(() => {
         upgradeCard.classList.add('completed');
+        setTimeout(() => {
+            // Re-render the upgrades list
+            const upgradesList = document.querySelector('.upgrades-list');
+            if (upgradesList) {
+                const remainingUpgrades = getActiveUpgrades().filter(u => !u.completed);
+                upgradesList.innerHTML = remainingUpgrades.map(upgrade => `
+                    <div class="upgrade-card" data-id="${upgrade.id}">
+                        <img src="${upgrade.icon}" alt="${upgrade.title}" class="upgrade-icon pixelated">
+                        <div class="upgrade-info">
+                            <div class="upgrade-title">${upgrade.title}</div>
+                        </div>
+                        <div class="upgrade-price">
+                            <img src="./assets/coin_icon.png" alt="Монеты" class="price-icon">
+                            <span class="price-value">${upgrade.price}</span>
+                        </div>
+                    </div>
+                `).join('');
+
+                // Reattach click handlers
+                attachUpgradeHandlers(upgradesList);
+            }
+        }, 500);
     }, 500);
+}
+
+// Attach click handlers to upgrade cards
+function attachUpgradeHandlers(container) {
+    const upgradeCards = container.querySelectorAll('.upgrade-card:not(.completed)');
+    upgradeCards.forEach(card => {
+        card.addEventListener('click', () => {
+            const upgradeId = card.dataset.id;
+            const upgrade = getActiveUpgrades().find(u => u.id === upgradeId);
+            if (upgrade && !upgrade.completed) {
+                handleUpgradePurchase(card, upgrade);
+            }
+        });
+    });
 }
 
 // Render stadium upgrades popup
@@ -68,7 +112,7 @@ function renderStadiumPopup() {
     const popup = document.createElement('div');
     popup.className = 'popup-overlay';
     
-    const upgrades = getActiveUpgrades();
+    const upgrades = getActiveUpgrades().filter(u => !u.completed);
     
     popup.innerHTML = `
         <div class="popup-container">
@@ -76,7 +120,7 @@ function renderStadiumPopup() {
             <h2 class="popup-title">Улучшение стадиона</h2>
             <div class="upgrades-list">
                 ${upgrades.map(upgrade => `
-                    <div class="upgrade-card ${upgrade.completed ? 'completed' : ''}" data-id="${upgrade.id}">
+                    <div class="upgrade-card" data-id="${upgrade.id}">
                         <img src="${upgrade.icon}" alt="${upgrade.title}" class="upgrade-icon pixelated">
                         <div class="upgrade-info">
                             <div class="upgrade-title">${upgrade.title}</div>
@@ -94,16 +138,8 @@ function renderStadiumPopup() {
     document.body.appendChild(popup);
 
     // Add click handlers for upgrade cards
-    const upgradeCards = popup.querySelectorAll('.upgrade-card:not(.completed)');
-    upgradeCards.forEach(card => {
-        card.addEventListener('click', () => {
-            const upgradeId = card.dataset.id;
-            const upgrade = upgrades.find(u => u.id === upgradeId);
-            if (upgrade && !upgrade.completed) {
-                handleUpgradePurchase(card, upgrade);
-            }
-        });
-    });
+    const upgradesList = popup.querySelector('.upgrades-list');
+    attachUpgradeHandlers(upgradesList);
 }
 
 // Popup handling
