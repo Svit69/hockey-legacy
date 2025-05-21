@@ -43,6 +43,8 @@ function handleUpgradePurchase(upgradeCard, upgrade) {
     // Update game state
     gameState.coins -= upgrade.price;
     upgrade.completed = true;
+    gameState.completedUpgrades.push(upgrade.id);
+    saveGameState();
 
     // Update UI
     updateResources();
@@ -127,8 +129,9 @@ window.openPopup = openPopup;
 
 // Update resource display
 export function updateResources() {
-    const coinsElement = document.querySelector('.resource-value:first-child');
-    const popularityElement = document.querySelector('.resource-value:last-child');
+    const coinsElements = document.querySelectorAll('.resource-value');
+    const coinsElement = coinsElements[0];
+    const popularityElement = coinsElements[1];
     
     if (coinsElement) coinsElement.textContent = gameState.coins;
     if (popularityElement) popularityElement.textContent = `${gameState.popularity}%`;
