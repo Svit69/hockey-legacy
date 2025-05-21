@@ -218,10 +218,12 @@ body {
 .upgrades-list {
     flex: 1;
     overflow-y: auto;
+    overflow-x: hidden;
     padding: 10px;
     display: flex;
     flex-direction: column;
     gap: 10px;
+    width: 100%;
 }
 
 .upgrade-card {
@@ -231,7 +233,9 @@ body {
     display: flex;
     align-items: center;
     gap: 15px;
-    min-height: 100px;
+    min-height: 80px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .upgrade-icon {
@@ -242,18 +246,18 @@ body {
 
 .upgrade-info {
     flex: 1;
+    min-width: 0;
 }
 
 .upgrade-title {
     color: #E1C291;
     font-size: 14px;
-    margin-bottom: 8px;
+    white-space: normal;
+    word-wrap: break-word;
 }
 
 .upgrade-description {
-    color: #E1C291;
-    font-size: 12px;
-    line-height: 1.4;
+    display: none;
 }
 
 .upgrade-price {
